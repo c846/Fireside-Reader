@@ -1,0 +1,68 @@
+General Premise:
+    I want to create a reader for ePub files that I can read on my machine locally.
+    The program will contain a dashboard and be able to open and bookmark things in epub files
+- Supported files: ePub, txt
+- Coded with?
+    - Use Tauri to build the app, as it is lightweight and easy to work with
+- Functionality
+    Stores necessary data in the app folder, like bookmarks in a book, books being read (the epub file), etc.
+    All books that are opened are saved to the app locally, so that if the book is deleted from the machine its still in the app folder
+    Mouse hides while reading (shows when being moved or interacting with menus)
+- UI Structure and Functionality
+    Opening the app opens up to a dashboard
+        The dashboard contains all started books with their cover and the title below it and author below that
+        In the center top is a search bar to search books by title
+        The dashboard has a big button on the bottom that runs from one edge of the app window to another
+            - it says "Start a new book!"
+            - Allows user to open a file
+    Settings button next to the search bar
+        Settings allows themes to be picked
+            - Available themes:
+                - Default theme: white background black text
+                - Paper theme: soft yellow background with yellowish-black text
+                - Night theme: very dark blue background with soft, light-blue text
+            - Font settings:
+                - Select font (from installed windows fonts)
+                - Select font size
+            - Page layout:
+                - Double column
+                - single page
+    Opened book
+        - The opened book itself
+            - Pressing space goes to next page
+            - tapping/clicking right or left goes back/forward page
+            - arrow keys go back/forth a page
+            - top right has page number
+                - Pressing page number bookmarks page (can only have one bookmark at once for pages, not for chapters)
+            - book content (text/images/etc.) is centered
+        - Bottom bar
+            - Appears when mouse presses/hovers bottom of window
+            - contains in this order: home button (return to dashboard), settings button, scroll bar with dot to move through book pages quickly, current page/total pages (can change page here too)
+        - left bar
+            - appears when mouse presses/hovers left of window
+            - contains top down in this order: Book title, author, chapters
+            - Can navigate from chapter to chapter with this
+            - Can bookmark a chapter here (adds a little square next to the name)
+        - Saved states
+            - When book is closed, automatically bookmarks page last read
+            - Save bookmarked chapters
+UI Design:
+    Theme is "Transluscent Glass Pane"
+        - Sharp, square corners
+        - No borders
+        - All menus/secondary items have an opaque transluscency to them
+        - Animations are smooth but crisp, should be based more on physical motion than fades, as if panes are appearing from outside screen instead of "materialzing" in
+        - Focus on layering: buttons and menus should have additional layers, with each topmost layer being slightly more opaque, as if another pane was stacked on top
+        Specifics
+            - Bottom and left bars slide in from left/bottom; do not hover/are fully flush to edges
+            - Hovering over interactibles makes them grow a little, and leaving it makes them shrink
+            - All secondary layers have slightly rounded edges, but are still square
+            - slider button is a rectangle
+            - Menus:
+                - Settings menu slides in from top and centers itself, does not take up whole window. Can click outside of it to exit
+                - When app launches, have a brief welcome screen that says "Good afternoon [current_win_user]!" (Good morning, evening, depending on time of day on PC)
+                - Going to/from dashboard has Animations
+                    - elements on dashboard also "slide in" from top like panes/ do not need to slide in from the verytop of window, can be more subtle
+
+
+    
