@@ -1,8 +1,10 @@
 <script lang="ts">
   import { fly } from 'svelte/transition';
   import { cubicIn, quintOut } from 'svelte/easing';
-  import { app, importAndOpen, openBook, removeBook } from '../lib/store.svelte';
+  import { getCurrentWindow } from '@tauri-apps/api/window';
+  import { app, flushAll, importAndOpen, openBook, removeBook } from '../lib/store.svelte';
   import BookCard from './BookCard.svelte';
+  import ConfirmClose from './ConfirmClose.svelte';
   import Icon from './Icon.svelte';
 
   let query = $state('');
@@ -45,13 +47,28 @@
     menu = null;
     await removeBook(id);
   }
+
+  let confirmClose = $state(false);
+
+  /** Esc peels back one layer at a time: context menu, then the close prompt. */
+  function onKey(e: KeyboardEvent) {
+    if (e.key !== 'Escape' || app.settingsOpen) return;
+    e.preventDefault();
+    if (menu) menu = null;
+    else confirmClose = !confirmClose;
+  }
+
+  async function closeApp() {
+    await flushAll();
+    await getCurrentWindow().destroy();
+  }
 </script>
 
 <svelte:window
   onpointerdown={(e) => {
     if (!(e.target as Element).closest?.('.ctx')) menu = null;
   }}
-  onkeydown={(e) => e.key === 'Escape' && (menu = null)}
+  onkeydown={onKey}
 />
 
 <div class="dash" out:fly|global={{ y: -36, duration: 320, easing: cubicIn }}>
@@ -106,6 +123,10 @@
   {/if}
 </div>
 
+{#if confirmClose}
+  <ConfirmClose onyes={closeApp} onno={() => (confirmClose = false)} />
+{/if}
+
 <style>
   .dash {
     position: absolute;
@@ -129,10 +150,24 @@
     height: 44px;
     padding: 0 14px;
     cursor: text;
+    transition:
+      transform 0.22s var(--ease-out),
+      background-color 0.22s ease;
+  }
+  /* Grows like the buttons; a gentler scale since the bar is wide. */
+  .search:hover,
+  .search:focus-within {
+    transform: scale(1.03);
+  }
+  .search:focus-within {
+    background: rgba(var(--pane), var(--a2));
   }
   .search input {
     flex: 1;
     height: 100%;
+  }
+  .search input:focus-visible {
+    outline: none;
   }
   .search input::placeholder {
     color: var(--text);

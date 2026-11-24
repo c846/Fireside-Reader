@@ -25,6 +25,8 @@ export interface LayoutOpts {
   fontSize: number;
   font: string | null;
   layout: Layout;
+  /** Column width as a percentage of the default (100). */
+  pageWidth: number;
   /** Put the text on its own pane so a background image can show around it. */
   paged: boolean;
 }
@@ -135,13 +137,13 @@ export class Paginator {
     let colW = 0;
     if (n === 2) {
       gap = Math.round(Math.min(112, Math.max(56, availW * 0.07)));
-      colW = Math.min((availW - gap) / 2, o.fontSize * 34);
+      colW = Math.min((availW - gap) / 2, o.fontSize * 34 * (o.pageWidth / 100));
       // Too narrow for two readable columns: fall back to one.
       if (colW < o.fontSize * 15) n = 1;
     }
     if (n === 1) {
       gap = 64;
-      colW = Math.min(availW, o.fontSize * 36);
+      colW = Math.min(availW, o.fontSize * 36 * (o.pageWidth / 100));
     }
     colW = Math.floor(colW);
 

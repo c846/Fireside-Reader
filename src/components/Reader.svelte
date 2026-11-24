@@ -31,8 +31,8 @@
   let bottomOpen = $state(false);
   let cursorHidden = $state(false);
 
-  /** Background image visible behind a cropped page while reading. */
-  const showBg = $derived(!!app.backgroundUrl && app.settings.backgroundInReader);
+  /** Backdrop (gradient or image) visible behind a cropped page while reading. */
+  const showBg = $derived(app.settings.backgroundInReader);
   const isBookmarked = $derived(bookmarkCol >= 0 && bookmarkCol === page);
   const pageLabel = $derived(perSpread === 2 && page + 1 < total ? `${page + 1}–${page + 2}` : `${page + 1}`);
   const currentChapter = $derived.by(() => {
@@ -74,6 +74,7 @@
       width: viewport.clientWidth,
       height: viewport.clientHeight,
       fontSize: s.fontSize,
+      pageWidth: s.pageWidth,
       font: s.font,
       layout: s.layout,
       paged: showBg,
@@ -103,6 +104,7 @@
   $effect(() => {
     void app.settings.font;
     void app.settings.fontSize;
+    void app.settings.pageWidth;
     void app.settings.layout;
     void showBg;
     untrack(scheduleRelayout);
@@ -176,7 +178,7 @@
         setPage(total - 1);
         break;
       case 'Escape':
-        leftOpen = bottomOpen = false;
+        home();
         break;
       default:
         return;

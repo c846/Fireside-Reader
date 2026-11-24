@@ -42,6 +42,11 @@
 
 <svelte:window onkeydown={onKey} />
 
+<!-- Default backdrop; cross-fades when the theme changes. -->
+{#key app.settings.theme}
+  <div class="app-grad grad-{app.settings.theme}" transition:fade={{ duration: 450 }}></div>
+{/key}
+
 {#if app.backgroundUrl}
   {#key app.backgroundUrl}
     <div class="app-bg" style:background-image="url({app.backgroundUrl})" transition:fade={{ duration: 500 }}></div>
@@ -63,6 +68,51 @@
 {/if}
 
 <style>
+  /*
+   * Three-colour backdrop: one colour pooled in the top-left corner, the
+   * theme's own colour through the middle, another in the bottom-right.
+   * Each corner colour is strongest right at the edge and eases out well
+   * before the centre, so the glass panes have something soft to blur.
+   */
+  .app-grad {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-color: var(--mid);
+    background-image:
+      radial-gradient(
+        ellipse 80% 75% at 0% 0%,
+        rgba(var(--tl), 0.9) 0%,
+        rgba(var(--tl), 0.5) 22%,
+        rgba(var(--tl), 0.18) 48%,
+        rgba(var(--tl), 0) 75%
+      ),
+      radial-gradient(
+        ellipse 80% 75% at 100% 100%,
+        rgba(var(--br), 0.9) 0%,
+        rgba(var(--br), 0.5) 22%,
+        rgba(var(--br), 0.18) 48%,
+        rgba(var(--br), 0) 75%
+      );
+  }
+  /* soft aqua · white · soft orange */
+  .grad-default {
+    --tl: 128, 216, 214;
+    --mid: #ffffff;
+    --br: 255, 180, 118;
+  }
+  /* burnt yellow · paper yellow · orange */
+  .grad-paper {
+    --tl: 214, 158, 48;
+    --mid: #f5ecd2;
+    --br: 240, 138, 44;
+  }
+  /* lighter blue · night blue · dark orange */
+  .grad-night {
+    --tl: 38, 76, 132;
+    --mid: #0a1220;
+    --br: 120, 50, 12;
+  }
   .app-bg {
     position: fixed;
     inset: 0;

@@ -8,6 +8,8 @@ export interface Settings {
   font: string | null;
   fontSize: number;
   layout: Layout;
+  /** Width of the text column as a percentage of the default. */
+  pageWidth: number;
   /** Extension of the stored background image, or null for none. */
   background: string | null;
   /** Show the background behind the book while reading. */

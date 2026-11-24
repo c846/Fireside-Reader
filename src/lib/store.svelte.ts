@@ -9,6 +9,7 @@ export const DEFAULT_SETTINGS: Settings = {
   font: null,
   fontSize: 19,
   layout: 'single',
+  pageWidth: 100,
   background: null,
   backgroundInReader: true,
   fullscreen: false,

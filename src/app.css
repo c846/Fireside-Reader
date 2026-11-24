@@ -106,8 +106,9 @@ input:focus-visible {
 
 .l1 {
   background: rgba(var(--pane), var(--a1));
+  /* Unprefixed only: given both forms, the production minifier keeps just the
+     -webkit- one, which WebView2 ignores, and the blur disappears. */
   backdrop-filter: blur(24px) saturate(1.35);
-  -webkit-backdrop-filter: blur(24px) saturate(1.35);
 }
 .l2 {
   background: rgba(var(--pane), var(--a2));

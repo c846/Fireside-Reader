@@ -16,11 +16,15 @@
   ];
   const MIN_SIZE = 12;
   const MAX_SIZE = 36;
+  const MIN_WIDTH = 70;
+  const MAX_WIDTH = 160;
+  const WIDTH_STEP = 5;
 
   // Slide in from above the window, settle in the centre.
   const travel = Math.round(window.innerHeight * 0.7);
   const close = () => (app.settingsOpen = false);
   const setSize = (n: number) => updateSettings({ fontSize: Math.max(MIN_SIZE, Math.min(MAX_SIZE, n)) });
+  const setWidth = (n: number) => updateSettings({ pageWidth: Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, n)) });
 
   let bgBusy = $state(false);
   let bgError = $state('');
@@ -115,7 +119,6 @@
         class="toggle-row rounded"
         role="switch"
         aria-checked={app.settings.backgroundInReader}
-        disabled={!app.settings.background}
         onclick={() => updateSettings({ backgroundInReader: !app.settings.backgroundInReader })}
       >
         <span class="switch l2" class:on={app.settings.backgroundInReader}><span class="knob"></span></span>
@@ -155,6 +158,26 @@
           </button>
         {/each}
       </div>
+      <div class="size">
+        <button class="step l2 rounded grow" onclick={() => setWidth(app.settings.pageWidth - WIDTH_STEP)} title="Narrower">
+          <span class="wglyph narrow"></span>
+        </button>
+        <input
+          type="range"
+          aria-label="Page width"
+          min={MIN_WIDTH}
+          max={MAX_WIDTH}
+          step={WIDTH_STEP}
+          value={app.settings.pageWidth}
+          oninput={(e) => setWidth(+e.currentTarget.value)}
+          style:--pct="{((app.settings.pageWidth - MIN_WIDTH) / (MAX_WIDTH - MIN_WIDTH)) * 100}%"
+        />
+        <button class="step l2 rounded grow" onclick={() => setWidth(app.settings.pageWidth + WIDTH_STEP)} title="Wider">
+          <span class="wglyph"></span>
+        </button>
+        <span class="size-val">{app.settings.pageWidth}%</span>
+      </div>
+      <p class="hint muted">Page width · 100% is the standard width</p>
     </section>
   </div>
 </div>
@@ -407,6 +430,22 @@
     justify-content: center;
     gap: 10px;
     font-weight: 600;
+  }
+  .wglyph {
+    display: inline-block;
+    width: 16px;
+    height: 10px;
+    border-left: 1.6px solid;
+    border-right: 1.6px solid;
+    background: linear-gradient(currentColor, currentColor) center / 100% 1.6px no-repeat;
+    vertical-align: middle;
+  }
+  .wglyph.narrow {
+    width: 9px;
+  }
+  .hint {
+    margin: 6px 0 0;
+    font-size: 12px;
   }
   .glyph {
     display: flex;
