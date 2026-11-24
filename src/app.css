@@ -1,0 +1,160 @@
+/*
+ * "Translucent glass pane" design language.
+ *  - Primary panes are sharp-cornered and borderless.
+ *  - Secondary layers (things sitting on a pane) get a 3px radius.
+ *  - Each stacked layer (.l1 -> .l2 -> .l3) is more opaque than the one below,
+ *    as if another sheet of glass were laid on top.
+ */
+
+:root {
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.55, 0, 0.75, 0.2);
+  --r: 3px;
+  --ui-font: 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+}
+
+:root,
+:root[data-theme='default'] {
+  --bg: #ffffff;
+  --bg-rgb: 255, 255, 255;
+  --text: #151515;
+  --pane: 226, 230, 237;
+  --a1: 0.58;
+  --a2: 0.76;
+  --a3: 0.94;
+  --shade: 20, 28, 44;
+  --scrim: rgba(255, 255, 255, 0.35);
+}
+
+:root[data-theme='paper'] {
+  --bg: #f5ecd2;
+  --bg-rgb: 245, 236, 210;
+  --text: #2f2a1b;
+  --pane: 223, 207, 164;
+  --a1: 0.5;
+  --a2: 0.7;
+  --a3: 0.9;
+  --shade: 74, 58, 22;
+  --scrim: rgba(245, 236, 210, 0.35);
+}
+
+:root[data-theme='night'] {
+  --bg: #0a1220;
+  --bg-rgb: 10, 18, 32;
+  --text: #b4cbe6;
+  --pane: 34, 53, 86;
+  --a1: 0.52;
+  --a2: 0.72;
+  --a3: 0.92;
+  --shade: 0, 0, 0;
+  --scrim: rgba(4, 8, 16, 0.4);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--ui-font);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
+}
+
+#app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  border: none;
+  outline: none;
+  background: none;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid rgba(var(--pane), 1);
+  outline-offset: 2px;
+}
+
+/* ---- glass layers ---- */
+
+.l1 {
+  background: rgba(var(--pane), var(--a1));
+  backdrop-filter: blur(24px) saturate(1.35);
+  -webkit-backdrop-filter: blur(24px) saturate(1.35);
+}
+.l2 {
+  background: rgba(var(--pane), var(--a2));
+}
+.l3 {
+  background: rgba(var(--pane), var(--a3));
+}
+
+.pane-shadow {
+  box-shadow:
+    0 24px 60px -18px rgba(var(--shade), 0.32),
+    0 2px 10px rgba(var(--shade), 0.06);
+}
+
+.lift {
+  box-shadow: 0 6px 18px -8px rgba(var(--shade), 0.35);
+}
+
+.rounded {
+  border-radius: var(--r);
+}
+
+/* Interactive things grow a little under the pointer and settle back. */
+.grow {
+  transition:
+    transform 0.22s var(--ease-out),
+    background-color 0.22s ease;
+}
+.grow:hover {
+  transform: scale(1.05);
+}
+.grow:active {
+  transform: scale(0.98);
+  transition-duration: 0.08s;
+}
+
+.muted {
+  opacity: 0.62;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--pane), var(--a3));
+}
