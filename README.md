@@ -23,6 +23,7 @@ npm run tauri build    # build an installer into src-tauri/target/release/bundle
 - **Chapters:** hover over or click the left edge. Click a chapter to go to it, or click the square beside it to bookmark the chapter.
 - **Resume:** your place is saved as you read and when you close the book or the window. This is separate from the page bookmark.
 - **Settings:** theme (Default, Paper, Night), font (your book's own fonts or any installed font), font size, and single page or double column.
+- **Fullscreen:** use the button under Window in Settings, or press F11. The app remembers it next time it opens.
 - **Background image:** choose one in Settings and it shows behind the dashboard. With **Show behind the page while reading** turned on, the book is placed on a smaller page pane with the image around it.
 
 Page numbers depend on the window size, font and layout, the same way they do in other ePub readers. Bookmarks and your reading position are saved as places in the text, so they stay put when the page count changes.

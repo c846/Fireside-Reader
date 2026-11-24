@@ -2,7 +2,7 @@
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
   import { getCurrentWindow } from '@tauri-apps/api/window';
-  import { app, flushAll, initApp } from './lib/store.svelte';
+  import { app, flushAll, initApp, syncFullscreen, toggleFullscreen } from './lib/store.svelte';
   import Welcome from './components/Welcome.svelte';
   import Dashboard from './components/Dashboard.svelte';
   import Reader from './components/Reader.svelte';
@@ -15,16 +15,32 @@
   onMount(() => {
     initApp();
     // Make sure the last-read position and settings hit the disk before the window goes away.
-    let unlisten: (() => void) | undefined;
-    getCurrentWindow()
+    const unlisteners: (() => void)[] = [];
+    const win = getCurrentWindow();
+    win
       .onCloseRequested(async () => {
         await flushAll();
       })
-      .then((u) => (unlisten = u))
+      .then((u) => unlisteners.push(u))
       .catch(() => {});
-    return () => unlisten?.();
+    win
+      .onResized(() => {
+        syncFullscreen().catch(() => {});
+      })
+      .then((u) => unlisteners.push(u))
+      .catch(() => {});
+    return () => unlisteners.forEach((u) => u());
   });
+
+  function onKey(e: KeyboardEvent) {
+    if (e.key === 'F11') {
+      e.preventDefault();
+      toggleFullscreen();
+    }
+  }
 </script>
+
+<svelte:window onkeydown={onKey} />
 
 {#if app.backgroundUrl}
   {#key app.backgroundUrl}

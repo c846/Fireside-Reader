@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fade, fly } from 'svelte/transition';
   import { cubicIn, quintOut } from 'svelte/easing';
-  import { app, chooseBackground, clearBackground, updateSettings } from '../lib/store.svelte';
+  import { app, chooseBackground, clearBackground, toggleFullscreen, updateSettings } from '../lib/store.svelte';
   import type { Layout, ThemeName } from '../lib/types';
   import FontPicker from './FontPicker.svelte';
 
@@ -125,6 +125,21 @@
     </section>
 
     <section>
+      <h3>Window</h3>
+      <button class="fs l2 rounded grow" class:l3={app.settings.fullscreen} onclick={toggleFullscreen}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" aria-hidden="true">
+          {#if app.settings.fullscreen}
+            <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />
+          {:else}
+            <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" />
+          {/if}
+        </svg>
+        {app.settings.fullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
+        <span class="key muted">F11</span>
+      </button>
+    </section>
+
+    <section>
       <h3>Page layout</h3>
       <div class="seg">
         {#each layouts as l (l.id)}
@@ -168,6 +183,23 @@
     display: flex;
     flex-direction: column;
     gap: 22px;
+  }
+  .fs {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+  }
+  .key {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: rgba(var(--pane), var(--a3));
   }
   .bg-row {
     display: flex;

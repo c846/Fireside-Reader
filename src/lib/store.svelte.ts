@@ -1,4 +1,5 @@
 import { open } from '@tauri-apps/plugin-dialog';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { backend } from './backend';
 import { readMeta } from './book/parse';
 import type { BookEntry, Settings } from './types';
@@ -10,6 +11,7 @@ export const DEFAULT_SETTINGS: Settings = {
   layout: 'single',
   background: null,
   backgroundInReader: true,
+  fullscreen: false,
 };
 
 export const BACKGROUND_EXTS = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp'];
@@ -71,6 +73,7 @@ export async function initApp(): Promise<void> {
     /* start with an empty shelf */
   }
   localStorage.setItem('fr-theme', app.settings.theme);
+  if (app.settings.fullscreen) getCurrentWindow().setFullscreen(true).catch(() => {});
   // Load the background before the welcome screen shows so it's there from the start.
   await Promise.race([loadBackground().catch(() => {}), new Promise((r) => setTimeout(r, 1500))]);
   markReady();
@@ -145,6 +148,26 @@ export function loadCover(id: string): Promise<string | null> {
     covers.set(id, c);
   }
   return c;
+}
+
+// ---- fullscreen ----------------------------------------------------------------
+
+export async function setFullscreen(on: boolean): Promise<void> {
+  updateSettings({ fullscreen: on });
+  try {
+    await getCurrentWindow().setFullscreen(on);
+  } catch (e) {
+    console.error('Fullscreen change failed', e);
+    updateSettings({ fullscreen: !on });
+  }
+}
+
+export const toggleFullscreen = () => setFullscreen(!app.settings.fullscreen);
+
+/** Keeps the setting honest if the window leaves fullscreen some other way. */
+export async function syncFullscreen(): Promise<void> {
+  const actual = await getCurrentWindow().isFullscreen();
+  if (actual !== app.settings.fullscreen) updateSettings({ fullscreen: actual });
 }
 
 // ---- background image --------------------------------------------------------

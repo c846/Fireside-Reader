@@ -12,6 +12,8 @@ export interface Settings {
   background: string | null;
   /** Show the background behind the book while reading. */
   backgroundInReader: boolean;
+  /** Window fills the screen; restored on next launch. */
+  fullscreen: boolean;
 }
 
 /**
